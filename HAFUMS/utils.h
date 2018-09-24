@@ -60,4 +60,10 @@ public:
 	}
 };
 
+class OUT
+{
+
+public:
+
+};
 #endif
