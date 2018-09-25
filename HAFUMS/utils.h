@@ -68,17 +68,17 @@ class IN
 		begin = 0;
 		end = file.gcount();//获取读取的字节树
 		Byte += end;
-		//cout << end << endl;
 		if (end ==0) return false;
 		return true;
 	}
 public:
-	IN(const element FilePath[128])
+	IN(const char FilePath[128])
 	{
 		file.open(FilePath,ios::binary|ios::in);
 		begin = 0;
 		end = 0;
 		Byte = 0;
+		memset(buff, 0, sizeof(buff));
 		if (!file.is_open())
 		{
 			std::cout << "找不到文件" << endl;
@@ -88,15 +88,21 @@ public:
 			bad = false;
 	}
 	//读取一字节
-	int operator()(element&data)
+	bool operator()(element&data)
 	{
-		if (bad) return -2;
+		if (bad) return false;
 
 		if (begin >= end)
-			if (!read()) return -1;
-
+			if (!read()) return false;
+		
 		data = buff[begin++];
-		return 1;
+		//cout << begin << "," << end << "," << buff[begin] << endl;
+		return true;
+	}
+	int get(void*c, int size)
+	{
+		file.read((char*)buff, size);
+		return file.gcount();
 	}
 	bool is()
 	{
@@ -144,13 +150,7 @@ public:
 		Byte += 8;
 		return 1;
 	}
-	int word(char str[8])
-	{
-		element b;
-		StrToByte(str, b);
-		file.write(&b, 1);
-		Byte += 8;
-	}
+	
 	bool is()
 	{
 		return bad;

@@ -1,8 +1,10 @@
 #pragma once
-#include"utils.h"
+#ifndef HAFFCODE_H
+#define HAFFCODE_H
+#include "pch.h"
 struct HaffNode
 {
-	int val;
+	char val;
 	int parent;
 	int rc;
 	int lc;
@@ -12,7 +14,8 @@ class HaffCode
 {
 public:
 	HaffCode();
-
+	bool initTree(const char path[256]);
 	~HaffCode();
 };
 
+#endif
