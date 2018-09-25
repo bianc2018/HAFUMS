@@ -33,16 +33,19 @@ int StrToByte(char str[ESIZE], element &b, int word = ESIZE)
 	try
 	{
 		int base = 1;
+		b = 0;
 		for (int i = word - 1; i >= 0; i--)
 		{
 			if (str[i] == '1')
 				b = base | b;
+			//cout << "str to b " <<(int)b<<" "<<base<<" "<< str << endl;
 			base <<= 1;
 		}
 		return 0;
 	}
 	catch (...)
 	{
+		cout << "发生错误：" << str << " " << (int)b << endl;
 		return -1;
 	}
 }
@@ -112,8 +115,6 @@ public:
 class OUT
 {
 	fstream file;
-	char buff[8];
-	int pos;
 	int Byte;
 	bool bad;
 
@@ -123,9 +124,7 @@ public:
 	OUT(const element FilePath[128])
 	{
 		file.open(FilePath, ios::binary | ios::out);
-		Byte=0;
-		pos = 0;
-		memset(buff, 0, sizeof(buff));
+		Byte= 0;
 		if (!file.is_open())
 		{
 			std::cout << "找不到文件" << endl;
@@ -134,33 +133,16 @@ public:
 		else
 			bad = false;
 	}
-	int write(char word[8])
-	{
-
-	}
 	//写一个位
-	int operator()(char bit)
+	int operator()(char word[8])
 	{
-
-		if (bad) return -2;
-		if (bit != '1'|| bit != '0') return 0;
-		try
-		{
-			if (pos >= ESIZE)
-			{
-				element b;
-				StrToByte(buff, b);
-				file.write(&b, 1);
-				Byte += 8;
-				pos = 0;
-			}
-			buff[pos++] = bit;
-			return 1;
-		}
-		catch (...)
-		{
-			return -1;
-		}
+		if (bad) return -1;
+		element b;
+		StrToByte(word, b);
+		//cout <<word<<":"<<(int)b<< endl;
+		file.write(&b, 1);
+		Byte += 8;
+		return 1;
 	}
 	int word(char str[8])
 	{
@@ -168,17 +150,6 @@ public:
 		StrToByte(str, b);
 		file.write(&b, 1);
 		Byte += 8;
-	}
-	void over()
-	{
-		if (pos != 0)
-		{
-			for (int i = pos; i < ESIZE; i++)
-				buff[i] = '0';
-			element b;
-			StrToByte(buff, b);
-			file.write(&b, 1);
-		}
 	}
 	bool is()
 	{
@@ -190,13 +161,7 @@ public:
 	}
 	~OUT()
 	{
-		over();
 		file.close();
 	}
 };
-
-
-
-
-
 #endif
