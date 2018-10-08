@@ -33,6 +33,8 @@ public:
 	bool codeChar(const char path[128]);
 	bool structTree();
 	bool initCodeMap(int pos,string str="");
+
+
 	~HaffCode();
 };
 
